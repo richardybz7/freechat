@@ -1,25 +1,54 @@
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route } from 'react-router-dom';
+import Home from './routes/home/home.component';
+import NotFound from './routes/notFound/notFound.component';
+import SignUp from './routes/signup/signup.component';
+import Login from './routes/login/login.component';
+import { Fragment, useEffect } from 'react';
+import { GlobalStyle } from './global.styles';
+import Main from './routes/main/main.component';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkUserSessionStart } from './store/user/user.action';
+import { selectIsLoggingIn, selectLoadingUser, selectSigningUp } from './store/user/user.selector';
+import { selectLoadingNotifications } from './store/notifications/notifications.selector';
+import { AnimatePresence } from 'framer-motion';
+import LoadingScreen from './components/loadingScreen/loadingScreen.component';
 
-function App() {
+const App = () => {
+  const dispatch = useDispatch()
+  const isLoggingIn = useSelector(selectIsLoggingIn)
+  const isSigningUp = useSelector(selectSigningUp)
+  const isLoadingNotifications = useSelector(selectLoadingNotifications)
+  const isLoadingUser = useSelector(selectLoadingUser)
+  let isLoading = true
+  if(!isSigningUp && 
+    !isLoggingIn
+    ){
+    isLoading = false
+  }
+  useEffect(() => {
+    dispatch(checkUserSessionStart())
+  },[])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Fragment>
+      <GlobalStyle/>
+        {
+          isLoading ? (
+            <AnimatePresence>
+              <LoadingScreen/>
+            </AnimatePresence>
+          ):(
+            <Routes>
+              <Route path='/' element={<Main/>}>
+                <Route index element={<Home/>}/>
+                <Route path='/login' element={<Login/>}/>
+                <Route path='/signup' element={<SignUp/>}/>
+              </Route>
+              <Route path='*' element={<NotFound/>}/>
+            </Routes>
+          )
+        }
+    </Fragment>
+  )
 }
 
 export default App;
