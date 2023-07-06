@@ -15,38 +15,23 @@ import LoadingScreen from './components/loadingScreen/loadingScreen.component';
 
 const App = () => {
   const dispatch = useDispatch()
-  const isLoggingIn = useSelector(selectIsLoggingIn)
-  const isSigningUp = useSelector(selectSigningUp)
   const isLoadingNotifications = useSelector(selectLoadingNotifications)
   const isLoadingUser = useSelector(selectLoadingUser)
-  let isLoading = true
-  if(!isSigningUp && 
-    !isLoggingIn
-    ){
-    isLoading = false
-  }
+  
   useEffect(() => {
     dispatch(checkUserSessionStart())
   },[])
   return (
     <Fragment>
       <GlobalStyle/>
-        {
-          isLoading ? (
-            <AnimatePresence>
-              <LoadingScreen/>
-            </AnimatePresence>
-          ):(
-            <Routes>
-              <Route path='/' element={<Main/>}>
-                <Route index element={<Home/>}/>
-                <Route path='/login' element={<Login/>}/>
-                <Route path='/signup' element={<SignUp/>}/>
-              </Route>
-              <Route path='*' element={<NotFound/>}/>
-            </Routes>
-          )
-        }
+        <Routes>
+          <Route path='/' element={<Main/>}>
+            <Route index element={<Home/>}/>
+            <Route path='/login' element={<Login/>}/>
+            <Route path='/signup' element={<SignUp/>}/>
+          </Route>
+          <Route path='*' element={<NotFound/>}/>
+        </Routes>
     </Fragment>
   )
 }

@@ -79,12 +79,11 @@ export function* login({payload: {email, password}}){
 export function* checkUserSession(){
   try{
     const userFirebaseData = yield call(getCurrentUser)
+    yield put(checkUserSessionSuccess())
     if(userFirebaseData){
       const {uid} = userFirebaseData
       yield put(getUserStart(uid))
     }
-    else
-      yield put(checkUserSessionSuccess())
   }
   catch(err){
     yield put(checkUserSessionFailed(err))
