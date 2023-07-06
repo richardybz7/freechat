@@ -10,14 +10,10 @@ const LoadingScreen = () => {
   const isSigningUp = useSelector(selectSigningUp)
   const navigate = useNavigate()
   useEffect(() => {
-    if(Object.keys(user).length > 0){
+    if(user && Object.keys(user).length > 0){
       navigate('/')
     }
   },[user])
-  useEffect(() => {
-    console.log('OHOY signing: ', isSigningUp)
-    console.log('OHOY logging: ', isLoggingIn)
-  },[isLoggingIn, isSigningUp])
   return (
     <LoadingParentContainer>
       LOADING

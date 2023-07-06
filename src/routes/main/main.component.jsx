@@ -1,10 +1,9 @@
 import { useEffect } from "react"
 import { Outlet, useLocation, useNavigate } from "react-router-dom"
-import { selectIsLoggingIn, selectLoadingUser, selectSigningUp, selectUser, selectUserError } from "../../store/user/user.selector"
-import { useDispatch, useSelector } from "react-redux"
-import { select_isOpen_SignInError, select_isOpen_SignInSignUpError, select_isOpen_SignUpError } from "../../store/display/display.selector"
+import { selectLoadingUser, selectUser, selectUserError } from "../../store/user/user.selector"
+import { useSelector } from "react-redux"
+import { select_isOpen_SignInError, select_isOpen_SignUpError } from "../../store/display/display.selector"
 import { MainParentContainer } from "./main.styles"
-import { OpenModal_SignInError, OpenModal_SignUpError } from "../../store/display/display.action"
 import { closeErrorPopup } from "../../utils/error.utils"
 import { selectError } from "../../store/error/error.selector"
 import { Fragment } from "react"
@@ -20,9 +19,6 @@ const Main = () => {
   const userError = useSelector(selectUserError)
   const location = useLocation()
   const loadingUser = useSelector(selectLoadingUser)
-  const dispatch = useDispatch()
-  const isLoggingIn = useSelector(selectIsLoggingIn)
-  const isSigningUp = useSelector(selectSigningUp)
 
   useEffect(() => {
     isOpen_SignUpError && closeErrorPopup(localError, userError)
@@ -32,25 +28,22 @@ const Main = () => {
   },[isOpen_SignInError])
   useEffect(() => {
     if(location.pathname === '/login'){
-      if(Object.keys(user).length > 0){
+      if(user && Object.keys(user).length > 0){
         navigate('/')
       } 
     }
     else if(location.pathname === '/'){
-      if(Object.keys(user).length < 1){
+      if(!user){
+        navigate('/login')
+      }
+      if(user && Object.keys(user).length < 1){
         navigate('/login')
       } 
     }
   },[location, user])
-  // useEffect(() => {
-  //   console.log('OHOY signing: ', isSigningUp)
-  //   console.log('OHOY logging: ', isLoggingIn)
-  //   if(!isSigningUp && 
-  //     !isLoggingIn
-  //     ){
-  //     isLoading = false
-  //   }
-  // },[isSigningUp, isLoggingIn])
+  useEffect(() => {
+    !loadingUser && !user && navigate('/login')
+  },[loadingUser])
   return (
     <Fragment>
       {

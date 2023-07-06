@@ -3,12 +3,14 @@ import { ButtonContainer, CloseModalContainer, ClosePattern, ColumnContainer, Co
 import AvatarLogo from "../avatar-logo/avatarLogo.component"
 import NotificationItem from "../notificationItem/notificationItem.component"
 import { Input, Button } from "../../common_styled_components/common.styles"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import UserSearchResult from "../userSearchResult/userSearchResult.component"
 import { selectContacts } from "../../store/contacts/contacts.selector"
 import { selectUser } from "../../store/user/user.selector"
 import { selectPendingContacts } from "../../store/pendingContacts/pendingContacts.selector"
 import { selectNotifications } from "../../store/notifications/notifications.selector"
+import { signOutUserStart } from "../../store/user/user.action"
+import { useNavigate } from "react-router-dom"
 
 const Modal = ({purpose, closeModal}) => {
   const [result, setResult] = useState('0')
@@ -17,11 +19,16 @@ const Modal = ({purpose, closeModal}) => {
   const user = useSelector(selectUser)
   const pendingContacts = useSelector(selectPendingContacts)
   const notifications = useSelector(selectNotifications)
+  const dispatch = useDispatch()
   const test = () => {
     setResult('0')
   }
   const userDispNameInputOnChange = (e) => {
     setUserDispNameInput(e.target.value)
+  }
+  const signOutHandler = (e) => {
+    e.preventDefault()
+    dispatch(signOutUserStart())
   }
   return (
     <ModalBackdrop onClick={closeModal}>
@@ -44,7 +51,7 @@ const Modal = ({purpose, closeModal}) => {
               <MenuContainer>
                 <Input 
                   purpose='displayName' 
-                  placeholder={user.name}
+                  placeholder={user && user.name && user.name}
                 />
                 {
                   //temp
@@ -89,7 +96,7 @@ const Modal = ({purpose, closeModal}) => {
         {
           purpose === 'menu' &&
           <SignOutButtonContainer>
-            <SignOutButton bg='color1'>Sign Out</SignOutButton>
+            <SignOutButton bg='color1' onClick={e => signOutHandler(e)}>Sign Out</SignOutButton>
           </SignOutButtonContainer>
         }
         {
